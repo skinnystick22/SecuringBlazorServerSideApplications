@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BethanysPieShopHRM.Shared;
 
-namespace BethanysPieShopHRM.Api.Models
+namespace BethanysPieShopHRM.Api.Models;
+
+public interface ICountryRepository
 {
-    public interface ICountryRepository
-    {
-        IEnumerable<Country> GetAllCountries();
-        Country GetCountryById(int countryId);
-    }
+    IEnumerable<Country> GetAllCountries();
+    Country GetCountryById(int countryId);
 }

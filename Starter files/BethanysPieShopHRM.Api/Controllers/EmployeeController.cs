@@ -2,87 +2,86 @@
 using BethanysPieShopHRM.Shared;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BethanysPieShopHRM.Api.Controllers
+namespace BethanysPieShopHRM.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class EmployeeController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EmployeeController : Controller
+    private readonly IEmployeeRepository _employeeRepository;
+
+    public EmployeeController(IEmployeeRepository employeeRepository)
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        _employeeRepository = employeeRepository;
+    }
 
-        public EmployeeController(IEmployeeRepository employeeRepository)
+    [HttpGet]
+    public IActionResult GetAllEmployees()
+    {
+        return Ok(_employeeRepository.GetAllEmployees());
+    }
+
+    [HttpGet("{id:int}")]
+    public IActionResult GetEmployeeById(int id)
+    {
+        return Ok(_employeeRepository.GetEmployeeById(id));
+    }
+
+    [HttpPost]
+    public IActionResult CreateEmployee([FromBody] Employee employee)
+    {
+        if (employee == null)
+            return BadRequest();
+
+        if (employee.FirstName == string.Empty || employee.LastName == string.Empty)
         {
-            _employeeRepository = employeeRepository;
+            ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
         }
 
-        [HttpGet]
-        public IActionResult GetAllEmployees()
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var createdEmployee = _employeeRepository.AddEmployee(employee);
+
+        return Created("employee", createdEmployee);
+    }
+
+    [HttpPut]
+    public IActionResult UpdateEmployee([FromBody] Employee employee)
+    {
+        if (employee == null)
+            return BadRequest();
+
+        if (employee.FirstName == string.Empty || employee.LastName == string.Empty)
         {
-            return Ok(_employeeRepository.GetAllEmployees());
+            ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(int id)
-        {
-            return Ok(_employeeRepository.GetEmployeeById(id));
-        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        [HttpPost]
-        public IActionResult CreateEmployee([FromBody] Employee employee)
-        {
-            if (employee == null)
-                return BadRequest();
+        var employeeToUpdate = _employeeRepository.GetEmployeeById(employee.EmployeeId);
 
-            if (employee.FirstName == string.Empty || employee.LastName == string.Empty)
-            {
-                ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
-            }
+        if (employeeToUpdate == null)
+            return NotFound();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        _employeeRepository.UpdateEmployee(employee);
 
-            var createdEmployee = _employeeRepository.AddEmployee(employee);
+        return NoContent(); //success
+    }
 
-            return Created("employee", createdEmployee);
-        }
+    [HttpDelete("{id:int}")]
+    public IActionResult DeleteEmployee(int id)
+    {
+        if (id == 0)
+            return BadRequest();
 
-        [HttpPut]
-        public IActionResult UpdateEmployee([FromBody] Employee employee)
-        {
-            if (employee == null)
-                return BadRequest();
+        var employeeToDelete = _employeeRepository.GetEmployeeById(id);
+        if (employeeToDelete == null)
+            return NotFound();
 
-            if (employee.FirstName == string.Empty || employee.LastName == string.Empty)
-            {
-                ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
-            }
+        _employeeRepository.DeleteEmployee(id);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var employeeToUpdate = _employeeRepository.GetEmployeeById(employee.EmployeeId);
-
-            if (employeeToUpdate == null)
-                return NotFound();
-
-            _employeeRepository.UpdateEmployee(employee);
-
-            return NoContent(); //success
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteEmployee(int id)
-        {
-            if (id == 0)
-                return BadRequest();
-
-            var employeeToDelete = _employeeRepository.GetEmployeeById(id);
-            if (employeeToDelete == null)
-                return NotFound();
-
-            _employeeRepository.DeleteEmployee(id);
-
-            return NoContent();//success
-        }
+        return NoContent();//success
     }
 }

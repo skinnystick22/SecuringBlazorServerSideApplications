@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace BethanysPieShopHRM.Api.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,9 +13,9 @@ namespace BethanysPieShopHRM.Api.Migrations
                 name: "Countries",
                 columns: table => new
                 {
-                    CountryId = table.Column<int>(nullable: false)
+                    CountryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -24,9 +26,9 @@ namespace BethanysPieShopHRM.Api.Migrations
                 name: "JobCategories",
                 columns: table => new
                 {
-                    JobCategoryId = table.Column<int>(nullable: false)
+                    JobCategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    JobCategoryName = table.Column<string>(nullable: true)
+                    JobCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -37,24 +39,26 @@ namespace BethanysPieShopHRM.Api.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<int>(nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    BirthDate = table.Column<DateTime>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    Street = table.Column<string>(nullable: true),
-                    Zip = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    CountryId = table.Column<int>(nullable: false),
-                    Smoker = table.Column<bool>(nullable: false),
-                    MaritalStatus = table.Column<int>(nullable: false),
-                    Gender = table.Column<int>(nullable: false),
-                    JoinedDate = table.Column<DateTime>(nullable: true),
-                    ExitDate = table.Column<DateTime>(nullable: true),
-                    JobCategoryId = table.Column<int>(nullable: false),
-                    Comment = table.Column<string>(nullable: true)
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Zip = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CountryId = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Smoker = table.Column<bool>(type: "bit", nullable: false),
+                    MaritalStatus = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExitDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    JobCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,14 +83,14 @@ namespace BethanysPieShopHRM.Api.Migrations
                 values: new object[,]
                 {
                     { 1, "Belgium" },
-                    { 8, "France" },
-                    { 7, "UK" },
-                    { 6, "China" },
-                    { 9, "Brazil" },
-                    { 4, "USA" },
-                    { 3, "Netherlands" },
                     { 2, "Germany" },
-                    { 5, "Japan" }
+                    { 3, "Netherlands" },
+                    { 4, "USA" },
+                    { 5, "Japan" },
+                    { 6, "China" },
+                    { 7, "UK" },
+                    { 8, "France" },
+                    { 9, "Brazil" }
                 });
 
             migrationBuilder.InsertData(
@@ -94,7 +98,6 @@ namespace BethanysPieShopHRM.Api.Migrations
                 columns: new[] { "JobCategoryId", "JobCategoryName" },
                 values: new object[,]
                 {
-                    { 8, "Cleaning" },
                     { 1, "Pie research" },
                     { 2, "Sales" },
                     { 3, "Management" },
@@ -102,13 +105,14 @@ namespace BethanysPieShopHRM.Api.Migrations
                     { 5, "Finance" },
                     { 6, "QA" },
                     { 7, "IT" },
+                    { 8, "Cleaning" },
                     { 9, "Bakery" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "EmployeeId", "BirthDate", "City", "Comment", "CountryId", "Email", "ExitDate", "FirstName", "Gender", "JobCategoryId", "JoinedDate", "LastName", "MaritalStatus", "PhoneNumber", "Smoker", "Street", "Zip" },
-                values: new object[] { 1, new DateTime(1979, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "Brussels", "Lorem Ipsum", 1, "bethany@bethanyspieshop.com", null, "Bethany", 1, 1, new DateTime(2015, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Smith", 1, "324777888773", false, "Grote Markt 1", "1000" });
+                columns: new[] { "EmployeeId", "BirthDate", "City", "Comment", "CountryId", "Email", "ExitDate", "FirstName", "Gender", "JobCategoryId", "JoinedDate", "LastName", "Latitude", "Longitude", "MaritalStatus", "PhoneNumber", "Smoker", "Street", "Zip" },
+                values: new object[] { 1, new DateTime(1979, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "Brussels", "Lorem Ipsum", 1, "bethany@bethanyspieshop.com", null, "Bethany", 1, 1, new DateTime(2015, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Smith", 50.850299999999997, 4.3517000000000001, 1, "324777888773", false, "Grote Markt 1", "1000" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_CountryId",
